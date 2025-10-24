@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate, login
 from django.views.decorators.http import require_POST
 from decimal import Decimal
 
-# Initialize Razorpay client
+
 razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 def store(request):
@@ -40,7 +40,7 @@ def checkout(request):
     order = data['order']
     items = data['items']
 
-    # Apply coupon if exists in session
+    
     final_total = order.get_cart_total
     applied_coupon = request.session.get("applied_coupon", None)
     if applied_coupon:
@@ -51,7 +51,7 @@ def checkout(request):
         except Coupon.DoesNotExist:
             pass
 
-    amount = int(final_total * 100)  # Razorpay expects amount in paise
+    amount = int(final_total * 100)  
     razorpay_order = razorpay_client.order.create(dict(
         amount=amount,
         currency="INR",
@@ -168,8 +168,8 @@ def apply_coupon(request):
         discount_amount = (discount_percent / Decimal('100')) * total
         new_total = total - discount_amount
 
-        # Create new Razorpay order for discounted total
-        razorpay_amount = int(new_total * 100)  # ensure integer
+        
+        razorpay_amount = int(new_total * 100)  
         razorpay_order = razorpay_client.order.create(dict(
             amount=razorpay_amount,
             currency="INR",
@@ -177,7 +177,7 @@ def apply_coupon(request):
         ))
         razorpay_order_id = razorpay_order['id']
 
-        # Save applied coupon in session
+       
         request.session["applied_coupon"] = coupon.code
 
         return JsonResponse({
@@ -189,3 +189,4 @@ def apply_coupon(request):
         })
     except Coupon.DoesNotExist:
         return JsonResponse({"valid": False})
+
