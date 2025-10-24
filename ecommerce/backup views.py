@@ -77,21 +77,21 @@ def checkout(request):
 def paymenthandler(request):
     if request.method == "POST":
         try:
-            # Get payment details from Razorpay
+            
             payment_id = request.POST.get('razorpay_payment_id', '')
             razorpay_order_id = request.POST.get('razorpay_order_id', '')
             signature = request.POST.get('razorpay_signature', '')
 
-            # Verify payment signature
+            
             params_dict = {
                 'razorpay_order_id': razorpay_order_id,
                 'razorpay_payment_id': payment_id,
                 'razorpay_signature': signature
             }
-			            # ✅ This raises SignatureVerificationError if invalid
+			            
             razorpay_client.utility.verify_payment_signature(params_dict)
 
-            # Payment verified successfully
+            
             return render(request, 'store/paymentsuccess.html')
 
         except Exception as e:
@@ -103,9 +103,9 @@ def paymenthandler(request):
     #         result = razorpay_client.utility.verify_payment_signature(params_dict)
 
     #         if result is None:
-    #             # Payment successful
+    #             
     #             amount = request.POST.get('razorpay_amount', 0)
-    #             # You can capture payment here if not auto-captured
+    #            
     #             # razorpay_client.payment.capture(payment_id, amount)
 
     #             return render(request, 'store/paymentsuccess.html')
@@ -209,4 +209,5 @@ def paymentsuccess(request):
     return render(request, 'store/paymentsuccess.html')
 
 def paymentfail(request):
+
     return render(request, 'store/paymentfail.html')
